@@ -5,7 +5,7 @@ It is in a  very early stage, with some request and response mapping, With time 
 
 ## Why this name?
 
-The time I started developing it I had that sensation of eating something :P in german **essen** is **To eat** so the name :stuck_out_tongue: :bowtie:
+The time I started developing it I had that sensation of eating something :stuck_out_tongue: in german **essen** is **To eat** so the name :stuck_out_tongue: :bowtie:
 
 ## Usage:
 
@@ -13,7 +13,7 @@ The time I started developing it I had that sensation of eating something :P in 
 package main
 
 import(
-	"github.com/essen"
+	"github.com/akshitgrover/essen"
 )
 
 func main(){
