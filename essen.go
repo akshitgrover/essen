@@ -25,5 +25,5 @@ func (e Essen) Listen(port int) {
 	sport := strconv.Itoa(port)
 	fport := ":" + sport
 	println("Lifting On Port: " + sport)
-	log.Fatal(http.ListenAndServe(fport, nil))
+	log.Fatal(http.ListenAndServe(fport, http.HandlerFunc(rootHandler)))
 }
