@@ -16,8 +16,15 @@ var paths = pathCache{get: make(handlerStorage), post: make(handlerStorage)}
 
 func (e Essen) Get(route string, f func(Response, Request)) {
 	ff := func(res http.ResponseWriter, req *http.Request) {
+
+		//Custom Response Fields
 		eres := Response{Res: res}
-		ereq := Request{Req: req}
+
+		//Custom Request Fields
+		body := GetBody{body: req.URL}
+		ereq := Request{Req: req, Body: body}
+
+		//Call Registered Middleware
 		f(eres, ereq)
 	}
 	paths.get[route] = ff
@@ -25,8 +32,15 @@ func (e Essen) Get(route string, f func(Response, Request)) {
 
 func (e Essen) Post(route string, f func(Response, Request)) {
 	ff := func(res http.ResponseWriter, req *http.Request) {
+
+		//Custom Response Fields
 		eres := Response{Res: res}
-		ereq := Request{Req: req}
+
+		//Custom Request Fields
+		body := PostBody{body: req}
+		ereq := Request{Req: req, Body: body}
+
+		//Call Registered Middleware
 		f(eres, ereq)
 	}
 	paths.post[route] = ff
