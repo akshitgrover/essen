@@ -11,7 +11,8 @@ type Essen struct{}
 
 //Essen Response type
 type Response struct {
-	Res http.ResponseWriter
+	Res       http.ResponseWriter
+	ReqMethod string
 }
 
 //Essen Request Type
