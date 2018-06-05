@@ -1,7 +1,6 @@
 package essen
 
 import (
-	"log"
 	"net/http"
 	"net/url"
 )
@@ -15,20 +14,37 @@ type PostBody struct {
 }
 
 type Param interface {
-	Params(name string) string
+	Params(name string) (EssenError, string)
 }
 
-func (b GetBody) Params(name string) string {
+func (b GetBody) Params(name string) (EssenError, string) {
 	v := b.body.Query().Get(name)
-	return v
+	ee := EssenError{nilval: true}
+	if v == "" {
+		ee.nilval = false
+		ee.errortype = "InvalidParam"
+		ee.message = `No parameter with key" ` + name + `"`
+	}
+	return ee, v
 }
 
-func (b PostBody) Params(name string) string {
+func (b PostBody) Params(name string) (EssenError, string) {
 	err := b.body.ParseForm()
+	ee := EssenError{nilval: true}
 	if err != nil {
-		log.Panic(err)
+		ee.nilval = false
+		ee.errortype = "FormParseError"
+		ee.message = err.Error()
+		return ee, ""
 	}
-	return b.body.PostFormValue(name)
+	v := b.body.PostFormValue(name)
+	if v == "" {
+		ee.nilval = false
+		ee.errortype = "InvalidParam"
+		ee.message = `No parameter with key" ` + name + `"`
+		return ee, ""
+	}
+	return ee, v
 }
 
 func (r Request) Path() string {
