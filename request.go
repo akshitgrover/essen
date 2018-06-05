@@ -1,6 +1,7 @@
 package essen
 
 import (
+	"log"
 	"net/http"
 	"net/url"
 )
@@ -29,14 +30,7 @@ func (b GetBody) Params(name string) (string, EssenError) {
 }
 
 func (b PostBody) Params(name string) (string, EssenError) {
-	err := b.body.ParseForm()
 	ee := EssenError{nilval: true}
-	if err != nil {
-		ee.nilval = false
-		ee.errortype = "FormParseError"
-		ee.message = err.Error()
-		return "", ee
-	}
 	v := b.body.PostFormValue(name)
 	if v == "" {
 		ee.nilval = false
@@ -79,6 +73,11 @@ func (r *Request) requestBody() {
 		return
 	}
 	if r.Method() == "POST" {
+		err := r.Req.ParseForm()
+		if err != nil {
+			ee := EssenError{nilval: false, errortype: "FormParseError", message: err.Error()}
+			log.Panic(ee.Error())
+		}
 		r.Body = PostBody{body: r.Req}
 		return
 	}
