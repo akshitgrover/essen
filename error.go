@@ -7,6 +7,9 @@ type EssenError struct {
 }
 
 func (err EssenError) Error() string {
+	if err.IsNil() {
+		return ""
+	}
 	return err.errortype + ": " + err.message
 }
 
