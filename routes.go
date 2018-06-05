@@ -38,8 +38,8 @@ func (e Essen) Get(route string, f func(Response, Request)) {
 		eres := Response{Res: res, ReqMethod: "GET"}
 
 		//Custom Request Fields
-		body := GetBody{body: req.URL}
-		ereq := Request{Req: req, Body: body}
+		ereq := Request{Req: req}
+		ereq.requestBody()
 
 		//Call Registered Middleware
 		f(eres, ereq)
@@ -54,8 +54,8 @@ func (e Essen) Post(route string, f func(Response, Request)) {
 		eres := Response{Res: res, ReqMethod: "POST"}
 
 		//Custom Request Fields
-		body := PostBody{body: req}
-		ereq := Request{Req: req, Body: body}
+		ereq := Request{Req: req}
+		ereq.requestBody()
 
 		//Call Registered Middleware
 		f(eres, ereq)
