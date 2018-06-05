@@ -7,7 +7,7 @@ type EssenError struct {
 }
 
 func (err EssenError) Error() string {
-	return err.errortype + ":" + err.message
+	return err.errortype + ": " + err.message
 }
 
 func (err EssenError) Message() string {
