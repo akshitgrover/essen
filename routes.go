@@ -22,8 +22,8 @@ func (e Essen) Head(route string, f func(Response, Request)) {
 		eres := Response{Res: res, ReqMethod: "HEAD"}
 
 		//Custom Request Fields
-		body := GetBody{body: req.URL}
-		ereq := Request{Req: req, Body: body}
+		ereq := Request{Req: req}
+		ereq.requestBody()
 
 		//Call Registered Middleware
 		f(eres, ereq)
