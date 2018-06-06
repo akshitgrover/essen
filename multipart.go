@@ -2,6 +2,7 @@ package essen
 
 import (
 	"log"
+	"path/filepath"
 )
 
 //isSet
@@ -14,6 +15,11 @@ func (e Essen) SetMultiPartConfig(configMap map[string]string) bool {
 	if configMap["UploadDir"] == "" {
 		configMap["UploadDir"] = Defaults.UploadDir
 	}
+	absPath, err := filepath.Abs(configMap["UploadDir"])
+	if err != nil {
+		log.Panic(err.Error())
+	}
+	configMap["UploadDir"] = absPath
 	f, ee := CreateFileIfNotExist(configMap["UploadDir"])
 	defer f.Close()
 	if !ee.IsNil() {
