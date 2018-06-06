@@ -15,3 +15,14 @@ func CreateFileIfNotExist(path string) (*os.File, EssenError) {
 	}
 	return f, ee
 }
+
+func CreateDirIfNotExist(path string) EssenError {
+	ee := EssenError{nilval: true}
+	err := os.MkdirAll(path, 0777)
+	if err != nil {
+		ee.nilval = false
+		ee.errortype = "PathError"
+		ee.message = err.Error()
+	}
+	return ee
+}
