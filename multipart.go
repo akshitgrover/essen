@@ -17,13 +17,13 @@ func (e Essen) SetMultiPartConfig(configMap map[string]string) bool {
 	}
 	absPath, err := filepath.Abs(configMap["UploadDir"])
 	if err != nil {
-		log.Panic(err.Error())
+		log.Fatal(err.Error())
 	}
 	configMap["UploadDir"] = absPath
 	f, ee := CreateFileIfNotExist(configMap["UploadDir"])
 	defer f.Close()
 	if !ee.IsNil() {
-		log.Panic(ee.Error())
+		log.Fatal(ee.Error())
 	}
 	MultiPartConfig = configMap
 	isSet = true
