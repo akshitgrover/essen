@@ -96,6 +96,26 @@ func (r Request) HasHeader(key string) bool {
 	return true
 }
 
+func (r Request) HasCookie(key string) bool {
+	_, err := r.Req.Cookie(key)
+	if err != nil {
+		return false
+	}
+	return true
+}
+
+func (r Request) CookieVal(key string) (string, EssenError) {
+	ee := EssenError{nilval: true}
+	if !r.HasCookie(key) {
+		ee.nilval = false
+		ee.errortype = "CookieError"
+		ee.message = "Cookie does not exist"
+		return "", ee
+	}
+	cookie, _ := r.Req.Cookie(key)
+	return cookie.Value, ee
+}
+
 func (r Request) Header(key string) (string, EssenError) {
 	if r.HasHeader(key) {
 		hval := r.Req.Header.Get(key)
