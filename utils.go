@@ -4,6 +4,14 @@ import (
 	"os"
 )
 
+const (
+	Minute = 60
+	Hour   = 60 * Minute
+	Day    = 24 * Hour
+	Week   = 7 * Day
+	Month  = 4 * Week
+)
+
 func CreateFileIfNotExist(path string) (*os.File, EssenError) {
 	ee := EssenError{nilval: true}
 	f, err := os.OpenFile(path, os.O_CREATE|os.O_RDWR|os.O_APPEND, 0666)
