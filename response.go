@@ -2,7 +2,9 @@ package essen
 
 import (
 	"encoding/json"
+	"io"
 	"net/http"
+	"os"
 )
 
 //Send JSON Response
@@ -22,6 +24,26 @@ func (r Response) Send(status int, v string) {
 	r.Res.Header().Set("Content-Type", "text/html")
 	r.Res.WriteHeader(status)
 	r.Res.Write([]byte(v))
+}
+
+func (r Response) SendFile(status int, path string) (int64, EssenError) {
+	ee := EssenError{nilval: true}
+	f, err := os.Open(path)
+	if err != nil {
+		ee.nilval = false
+		ee.errortype = "PathError"
+		ee.message = err.Error()
+		return 0, ee
+	}
+	r.Res.WriteHeader(status)
+	n, err := io.Copy(r.Res, f)
+	if err != nil {
+		ee.nilval = false
+		ee.errortype = "FileCopy"
+		ee.message = err.Error()
+		return 0, ee
+	}
+	return n, ee
 }
 
 //Set Cookie
