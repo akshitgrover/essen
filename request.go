@@ -131,7 +131,7 @@ func (r Request) Header(key string) (string, EssenError) {
 func (r *Request) requestBody() {
 	contentType, ee := r.Header("Content-Type")
 	if !ee.IsNil() {
-		log.Panic(ee.Error())
+		contentType = "application/x-www-form-urlencoded"
 	}
 	if contentType == "multipart/form-data" {
 		if !mConfigIsSet() {
