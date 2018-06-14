@@ -13,7 +13,12 @@ type pathCache struct {
 	use  handlerStorage
 }
 
-var paths = pathCache{get: make(handlerStorage), post: make(handlerStorage), head: make(handlerStorage)}
+var paths = pathCache{
+	get:  make(handlerStorage),
+	post: make(handlerStorage),
+	head: make(handlerStorage),
+	use:  make(handlerStorage),
+}
 
 func (e Essen) Head(route string, f func(Response, Request)) {
 	ff := func(res http.ResponseWriter, req *http.Request) {
@@ -65,8 +70,15 @@ func (e Essen) Post(route string, f func(Response, Request)) {
 
 func (e Essen) Use(route string, f func(Response, Request)) {
 	ff := func(res http.ResponseWriter, req *http.Request) {
-		eres := Response{Res: res, ReqMethod: "USE"}
+
+		//Custom Response Field
+		eres := Response{Res: res, ReqMethod: req.Method}
+
+		//Custom Request Fields
 		ereq := Request{Req: req}
+		ereq.requestBody()
+
+		//Call Registered Middleware
 		f(eres, ereq)
 	}
 	paths.use[route] = ff
