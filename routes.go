@@ -1,23 +1,28 @@
 package essen
 
 import (
+	"log"
 	"net/http"
+	"path/filepath"
 )
 
 type handlerStorage map[string]func(http.ResponseWriter, *http.Request)
+type staticHandlerStorage map[string]http.Handler
 
 type pathCache struct {
-	post handlerStorage
-	get  handlerStorage
-	head handlerStorage
-	use  handlerStorage
+	post   handlerStorage
+	get    handlerStorage
+	head   handlerStorage
+	use    handlerStorage
+	static staticHandlerStorage
 }
 
 var paths = pathCache{
-	get:  make(handlerStorage),
-	post: make(handlerStorage),
-	head: make(handlerStorage),
-	use:  make(handlerStorage),
+	get:    make(handlerStorage),
+	post:   make(handlerStorage),
+	head:   make(handlerStorage),
+	use:    make(handlerStorage),
+	static: make(staticHandlerStorage),
 }
 
 func (e Essen) Head(route string, f func(Response, Request)) {
@@ -82,4 +87,24 @@ func (e Essen) Use(route string, f func(Response, Request)) {
 		f(eres, ereq)
 	}
 	paths.use[route] = ff
+}
+
+func (e Essen) Static(route string, path string) {
+
+	//Create error instance
+	ee := EssenError{nilval: true}
+
+	//Generate absolute path
+	path, err := filepath.Abs(path)
+
+	//Check for absolute path generation error
+	if err != nil {
+		ee.nilval = false
+		ee.errortype = "PathError"
+		ee.message = "String provided cannot be used for absolute path conversion"
+		log.Panic(ee.Error())
+	}
+
+	//Create file serving handler
+	paths.static[route] = http.FileServer(http.Dir(path))
 }
