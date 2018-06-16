@@ -3,8 +3,11 @@ package essen
 import (
 	"encoding/json"
 	"io"
+	"log"
 	"net/http"
 	"os"
+	"path/filepath"
+	"text/template"
 )
 
 //Send JSON Response
@@ -61,4 +64,33 @@ func (r Response) Set(k string, v string) {
 func (r Response) SendStatus(status int) {
 	r.Res.WriteHeader(status)
 	r.Res.Write([]byte(""))
+}
+
+//Rendering Templates
+
+func (r Response) Render(status int, filename string, data interface{}, f TemplateFunc) {
+
+	//Create Custom Error
+	ee := EssenError{nilval: true}
+	base := filepath.Base(filename)
+	abs, err := filepath.Abs(filename)
+
+	//Check Absolute Path Conversion Error
+	if err != nil {
+		ee.nilval = false
+		ee.errortype = "PathError"
+		ee.message = "Template absolute path conversion error"
+		log.Panic(ee)
+	}
+
+	//Execute Template
+	err = template.Must(template.New(base).Funcs(template.FuncMap(f)).ParseFiles(abs)).ExecuteTemplate(r.Res, base, data)
+
+	//Check Template Execution Error
+	if err != nil {
+		ee.nilval = false
+		ee.errortype = "TemplateError"
+		ee.message = "Error while executing template"
+		log.Panic(ee)
+	}
 }
