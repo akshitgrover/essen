@@ -12,6 +12,16 @@ const (
 	Month  = 4 * Week
 )
 
+type TemplateFunc map[string]interface{}
+
+func GetTemplateFunc() TemplateFunc {
+	return make(TemplateFunc)
+}
+
+func (t TemplateFunc) Push(key string, f interface{}) {
+	t[key] = f
+}
+
 func CreateFileIfNotExist(path string) (*os.File, EssenError) {
 	ee := EssenError{nilval: true}
 	f, err := os.OpenFile(path, os.O_CREATE|os.O_RDWR|os.O_APPEND, 0666)
