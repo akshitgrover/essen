@@ -94,3 +94,8 @@ func (r Response) Render(status int, filename string, data interface{}, f Templa
 		log.Panic(ee)
 	}
 }
+
+func (r Response) Redirect(status int, url string) {
+	r.Set("Location", url)
+	r.SendStatus(status)
+}
