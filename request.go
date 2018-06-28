@@ -18,6 +18,7 @@ type PostBody struct {
 
 type MultiPartBody struct {
 	body *http.Request
+	Uid  string
 }
 
 type Param interface {
@@ -49,6 +50,11 @@ func (b PostBody) Params(name string) (string, EssenError) {
 
 func (b MultiPartBody) Params(name string) (string, EssenError) {
 	ee := EssenError{nilval: true}
+	uid := b.Uid
+	v, ok := uploadedPaths[uid][name]
+	if ok {
+		return v, ee
+	}
 	file, fileHeader, err := b.body.FormFile(name)
 	if err != nil && err.Error() != "http: no such file" {
 		ee.nilval = false
@@ -64,9 +70,13 @@ func (b MultiPartBody) Params(name string) (string, EssenError) {
 		}
 		n, err := io.Copy(f, file)
 		log.Println(n, err)
+		m := uploadedPaths[uid].push(name, path)
+		if m != nil {
+			uploadedPaths[uid] = m
+		}
 		return path, ee
 	}
-	v := b.body.FormValue(name)
+	v = b.body.FormValue(name)
 	if v == "" {
 		ee.nilval = false
 		ee.errortype = "InvalidParam"
@@ -137,7 +147,7 @@ func (r *Request) requestBody() {
 		if !mConfigIsSet() {
 			setDefaultConfig()
 		}
-		r.Body = MultiPartBody{body: r.Req}
+		r.Body = MultiPartBody{body: r.Req, Uid: r.Uid}
 		return
 	}
 	if r.Method() == "GET" || r.Method() == "HEAD" {

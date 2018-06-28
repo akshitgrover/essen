@@ -5,6 +5,22 @@ import (
 	"path/filepath"
 )
 
+//Paths for uploaded files
+type uploadParam map[string]string
+
+func (u uploadParam) push(key string, value string) uploadParam {
+	if u != nil {
+		u[key] = value
+	} else {
+		u = make(uploadParam)
+		u[key] = value
+		return u
+	}
+	return nil
+}
+
+var uploadedPaths = make(map[string]uploadParam)
+
 //isSet
 var isSet = false
 

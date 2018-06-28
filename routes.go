@@ -1,6 +1,7 @@
 package essen
 
 import (
+	"github.com/zemirco/uid"
 	"log"
 	"net/http"
 	"path/filepath"
@@ -32,7 +33,7 @@ func (e Essen) Head(route string, f func(Response, Request)) {
 		eres := Response{Res: res, ReqMethod: "HEAD"}
 
 		//Custom Request Fields
-		ereq := Request{Req: req}
+		ereq := Request{Req: req, Uid: uid.New(7)}
 		ereq.requestBody()
 
 		//Call Registered Middleware
@@ -48,7 +49,7 @@ func (e Essen) Get(route string, f func(Response, Request)) {
 		eres := Response{Res: res, ReqMethod: "GET"}
 
 		//Custom Request Fields
-		ereq := Request{Req: req}
+		ereq := Request{Req: req, Uid: uid.New(7)}
 		ereq.requestBody()
 
 		//Call Registered Middleware
@@ -64,7 +65,7 @@ func (e Essen) Post(route string, f func(Response, Request)) {
 		eres := Response{Res: res, ReqMethod: "POST"}
 
 		//Custom Request Fields
-		ereq := Request{Req: req}
+		ereq := Request{Req: req, Uid: uid.New(7)}
 		ereq.requestBody()
 
 		//Call Registered Middleware
@@ -80,7 +81,7 @@ func (e Essen) Use(route string, f func(Response, Request)) {
 		eres := Response{Res: res, ReqMethod: req.Method}
 
 		//Custom Request Fields
-		ereq := Request{Req: req}
+		ereq := Request{Req: req, Uid: uid.New(7)}
 		ereq.requestBody()
 
 		//Call Registered Middleware

@@ -19,6 +19,7 @@ type Response struct {
 type Request struct {
 	Req  *http.Request
 	Body Param
+	Uid  string
 }
 
 //Return Essen struct
