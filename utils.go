@@ -1,6 +1,7 @@
 package essen
 
 import (
+	"essen/jobqueue"
 	"os"
 )
 
@@ -43,4 +44,8 @@ func CreateDirIfNotExist(path string) EssenError {
 		ee.message = err.Error()
 	}
 	return ee
+}
+
+func SetConcurrencyLimit(n int) {
+	jobqueue.SetConcurrecny(n)
 }
