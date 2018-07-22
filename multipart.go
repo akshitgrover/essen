@@ -19,6 +19,14 @@ func (u uploadParam) push(key string, value string) uploadParam {
 	return nil
 }
 
+//Deleting Request Related MetaData (Mostly Multipart Data)
+func (r Request) Close() {
+	_, ok := uploadedPaths[r.Uid]
+	if ok {
+		delete(uploadedPaths, r.Uid)
+	}
+}
+
 var uploadedPaths = make(map[string]uploadParam)
 
 //isSet
@@ -36,8 +44,7 @@ func (e Essen) SetMultiPartConfig(configMap map[string]string) bool {
 		log.Fatal(err.Error())
 	}
 	configMap["UploadDir"] = absPath
-	f, ee := CreateFileIfNotExist(configMap["UploadDir"])
-	defer f.Close()
+	ee := CreateDirIfNotExist(configMap["UploadDir"])
 	if !ee.IsNil() {
 		log.Fatal(ee.Error())
 	}
