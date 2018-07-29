@@ -3,13 +3,16 @@ package essen
 import (
 	"essen/jobqueue"
 	"net/http"
-	"strings"
 )
 
 func rootHandler(res http.ResponseWriter, req *http.Request) {
 
 	//Handler For Static Methods
-	staticPath := "/" + strings.Split(req.URL.Path, "/")[1]
+	staticPath := matchStaticUrl(req.URL.Path)
+	if staticPath == "" {
+		http.NotFound(res, req)
+		return
+	}
 	vStatic, ok := paths.static[staticPath]
 	if ok {
 		jobqueue.QueuePush(func() {

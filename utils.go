@@ -3,6 +3,7 @@ package essen
 import (
 	"essen/jobqueue"
 	"os"
+	"regexp"
 )
 
 const (
@@ -48,4 +49,17 @@ func CreateDirIfNotExist(path string) EssenError {
 
 func SetConcurrencyLimit(n int) {
 	jobqueue.SetConcurrecny(n)
+}
+
+func matchStaticUrl(url string) string {
+	l := 0
+	mString := ""
+	for k := range paths.static {
+		matched, _ := regexp.MatchString("^"+k, url)
+		if matched && len(k) > l {
+			l = len(k)
+			mString = k
+		}
+	}
+	return mString
 }
