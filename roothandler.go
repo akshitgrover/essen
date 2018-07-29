@@ -81,6 +81,22 @@ func rootHandler(res http.ResponseWriter, req *http.Request) {
 		})
 		break
 
+	//Handle Put Requests
+	case "PUT":
+		v, ok := paths.put[req.URL.Path]
+		if !ok {
+			jobqueue.QueuePush(func() {
+				http.NotFound(res, req)
+				jobqueue.QueueNext()
+			})
+			return
+		}
+		jobqueue.QueuePush(func() {
+			v(res, req)
+			jobqueue.QueueNext()
+		})
+		break
+
 	//Handle Any Other Request Method
 	default:
 		jobqueue.QueuePush(func() {

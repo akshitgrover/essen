@@ -12,6 +12,7 @@ type staticHandlerStorage map[string]http.Handler
 
 type pathCache struct {
 	post   handlerStorage
+	put    handlerStorage
 	get    handlerStorage
 	head   handlerStorage
 	use    handlerStorage
@@ -21,6 +22,7 @@ type pathCache struct {
 var paths = pathCache{
 	get:    make(handlerStorage),
 	post:   make(handlerStorage),
+	put:    make(handlerStorage),
 	head:   make(handlerStorage),
 	use:    make(handlerStorage),
 	static: make(staticHandlerStorage),
@@ -72,6 +74,22 @@ func (e Essen) Post(route string, f func(Response, Request)) {
 		f(eres, ereq)
 	}
 	paths.post[route] = ff
+}
+
+func (e Essen) Put(route string, f func(Response, Request)) {
+	ff := func(res http.ResponseWriter, req *http.Request) {
+
+		//Custom Response Fields
+		eres := Response{Res: res, ReqMethod: "PUT"}
+
+		//Custom Request Fields
+		ereq := Request{Req: req, Uid: uid.New(7)}
+		ereq.requestBody()
+
+		//Call Registered Middleware
+		f(eres, ereq)
+	}
+	paths.put[route] = ff
 }
 
 func (e Essen) Use(route string, f func(Response, Request)) {

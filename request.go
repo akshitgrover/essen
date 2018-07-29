@@ -154,7 +154,7 @@ func (r *Request) requestBody() {
 		r.Body = GetBody{body: r.Req.URL}
 		return
 	}
-	if r.Method() == "POST" {
+	if r.Method() == "POST" || r.Method() == "PUT" {
 		err := r.Req.ParseForm()
 		if err != nil {
 			ee := EssenError{nilval: false, errortype: "FormParseError", message: err.Error()}
