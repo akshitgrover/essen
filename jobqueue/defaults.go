@@ -4,4 +4,4 @@ type Default struct {
 	concurrencyLimit int
 }
 
-var Defaults = Default{concurrencyLimit: 7}
+var Defaults = Default{concurrencyLimit: 25}

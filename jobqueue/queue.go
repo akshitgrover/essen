@@ -1,7 +1,5 @@
 package jobqueue
 
-import ()
-
 var concurrencyLimit = Defaults.concurrencyLimit
 var inProgress = 0
 var Queue = make([](func()), 0, 700)
@@ -16,7 +14,7 @@ func QueuePush(f func()) {
 		inProgress++
 		fn := Queue[0]
 		Queue = Queue[1:]
-		fn()
+		go fn()
 	}
 }
 
@@ -26,6 +24,6 @@ func QueueNext() {
 		inProgress++
 		fn := Queue[0]
 		Queue = Queue[1:]
-		fn()
+		go fn()
 	}
 }
