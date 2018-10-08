@@ -7,30 +7,33 @@ import (
 
 func rootHandler(res http.ResponseWriter, req *http.Request) {
 
-	//Handler For Static Methods
+	done := make(chan bool)
+
+	// Handler For Static Methods
 	staticPath := matchStaticUrl(req.URL.Path)
-	if staticPath == "" {
-		http.NotFound(res, req)
-		return
-	}
 	vStatic, ok := paths.static[staticPath]
 	if ok {
 		jobqueue.QueuePush(func() {
 			http.StripPrefix(staticPath+"/", vStatic).ServeHTTP(res, req)
+			done <- true
 			jobqueue.QueueNext()
 		})
+		<-done
 		return
 	}
 
 	//Handler For Use Methods
-	vUse, ok := paths.use[req.URL.Path]
-	if ok {
+	vUse, useOk := paths.use[req.URL.Path]
+	if useOk {
 		jobqueue.QueuePush(func() {
 			vUse(res, req)
+			done <- true
 			jobqueue.QueueNext()
 		})
+		<-done
 		return
 	}
+
 	switch req.Method {
 
 	//Handler Head Requests
@@ -39,12 +42,14 @@ func rootHandler(res http.ResponseWriter, req *http.Request) {
 		if !ok {
 			jobqueue.QueuePush(func() {
 				http.NotFound(res, req)
+				done <- true
 				jobqueue.QueueNext()
 			})
-			return
+			break
 		}
 		jobqueue.QueuePush(func() {
 			v(res, req)
+			done <- true
 			jobqueue.QueueNext()
 		})
 		break
@@ -55,12 +60,14 @@ func rootHandler(res http.ResponseWriter, req *http.Request) {
 		if !ok {
 			jobqueue.QueuePush(func() {
 				http.NotFound(res, req)
+				done <- true
 				jobqueue.QueueNext()
 			})
-			return
+			break
 		}
 		jobqueue.QueuePush(func() {
 			v(res, req)
+			done <- true
 			jobqueue.QueueNext()
 		})
 		break
@@ -71,12 +78,14 @@ func rootHandler(res http.ResponseWriter, req *http.Request) {
 		if !ok {
 			jobqueue.QueuePush(func() {
 				http.NotFound(res, req)
+				done <- true
 				jobqueue.QueueNext()
 			})
-			return
+			break
 		}
 		jobqueue.QueuePush(func() {
 			v(res, req)
+			done <- true
 			jobqueue.QueueNext()
 		})
 		break
@@ -87,12 +96,14 @@ func rootHandler(res http.ResponseWriter, req *http.Request) {
 		if !ok {
 			jobqueue.QueuePush(func() {
 				http.NotFound(res, req)
+				done <- true
 				jobqueue.QueueNext()
 			})
-			return
+			break
 		}
 		jobqueue.QueuePush(func() {
 			v(res, req)
+			done <- true
 			jobqueue.QueueNext()
 		})
 		break
@@ -101,8 +112,11 @@ func rootHandler(res http.ResponseWriter, req *http.Request) {
 	default:
 		jobqueue.QueuePush(func() {
 			http.NotFound(res, req)
+			done <- true
 			jobqueue.QueueNext()
 		})
 		break
 	}
+	<-done
+
 }
