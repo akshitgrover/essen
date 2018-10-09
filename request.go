@@ -140,6 +140,7 @@ func (r Request) Header(key string) (string, EssenError) {
 
 func (r *Request) requestBody() {
 	contentType, ee := r.Header("Content-Type")
+	r.App = essenGlobal.Locals
 	if !ee.IsNil() {
 		contentType = "application/x-www-form-urlencoded"
 	}

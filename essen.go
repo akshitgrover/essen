@@ -6,8 +6,12 @@ import (
 	"strconv"
 )
 
+var essenGlobal Essen
+
 //Essen struct
-type Essen struct{}
+type Essen struct {
+	Locals map[string]interface{}
+}
 
 //Essen Response type
 type Response struct {
@@ -18,13 +22,15 @@ type Response struct {
 //Essen Request Type
 type Request struct {
 	Req  *http.Request
+	App  map[string]interface{}
 	Body Param
 	Uid  string
 }
 
 //Return Essen struct
 func App() Essen {
-	e := Essen{}
+	e := Essen{Locals: make(map[string]interface{})}
+	essenGlobal = e
 	return e
 }
 
