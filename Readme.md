@@ -1,13 +1,16 @@
 # Essen
 
+[![GoDoc](https://godoc.org/github.com/akshitgrover/essen?status.svg)](https://godoc.org/github.com/akshitgrover/essen)
+[![Go Report Card](https://goreportcard.com/badge/github.com/akshitgrover/essen)](https://goreportcard.com/report/github.com/akshitgrover/essen)
+
 Essen is a golang based micro web framework, inspired by express.js framework for node.js.
 It is in a  very early stage, with some request and response mapping, With time it will ripe.
 
-## Why this name?
+## Why the name?
 
-The time I started developing it I had that sensation of eating something :stuck_out_tongue: in german **essen** is **To eat** so the name :stuck_out_tongue: :bowtie:
+The time I started developing it I had that sensation of eating something, in german **essen** is **To eat** so the name :P :'|)
 
-## Usage:
+## 10 seconds to code:
 
 ```go
 package main
@@ -20,7 +23,7 @@ func main(){
 	e := essen.App()
 
 	e.Use("/getpath",func(res essen.Response,req essen.Request){
-		res.Res.Write([]byte("Hello World"))
+		res.Send(200, "Hello World")
 	}) // Use Method is for any request method
 
 	// Similar Methods For Post And Get Request
@@ -33,4 +36,10 @@ func main(){
 
 This project is in very early stage, will be developing it further.
 
-Will :heart: any suggestions and ideas for the same.
+Will love any suggestions and ideas for the same.
+
+## Copyright & License
+
+[MIT License](./LICENSE)
+
+Copyright (c) 2018 Akshit Grover
