@@ -8,24 +8,24 @@ import (
 	"strings"
 )
 
-type GetBody struct {
+type getBody struct {
 	body *url.URL
 }
 
-type PostBody struct {
+type postBody struct {
 	body *http.Request
 }
 
-type MultiPartBody struct {
+type multiPartBody struct {
 	body *http.Request
-	Uid  string
+	uid  string
 }
 
-type Param interface {
+type param interface {
 	Params(name string) (string, EssenError)
 }
 
-func (b GetBody) Params(name string) (string, EssenError) {
+func (b getBody) Params(name string) (string, EssenError) {
 	v := b.body.Query().Get(name)
 	ee := EssenError{nilval: true}
 	if v == "" {
@@ -36,7 +36,7 @@ func (b GetBody) Params(name string) (string, EssenError) {
 	return v, ee
 }
 
-func (b PostBody) Params(name string) (string, EssenError) {
+func (b postBody) Params(name string) (string, EssenError) {
 	ee := EssenError{nilval: true}
 	v := b.body.PostFormValue(name)
 	if v == "" {
@@ -48,9 +48,9 @@ func (b PostBody) Params(name string) (string, EssenError) {
 	return v, ee
 }
 
-func (b MultiPartBody) Params(name string) (string, EssenError) {
+func (b multiPartBody) Params(name string) (string, EssenError) {
 	ee := EssenError{nilval: true}
-	uid := b.Uid
+	uid := b.uid
 	v, ok := uploadedPaths[uid][name]
 	if ok {
 		return v, ee
@@ -86,18 +86,22 @@ func (b MultiPartBody) Params(name string) (string, EssenError) {
 	return v, ee
 }
 
+//Path functions is used to get URL path
 func (r Request) Path() string {
 	return r.Req.URL.Path
 }
 
+//Host is used to get host address from the url
 func (r Request) Host() string {
 	return r.Req.URL.Host
 }
 
+//Method is used to check HTTP request method.
 func (r Request) Method() string {
 	return r.Req.Method
 }
 
+//HasHeader is used to check if a header is sent for the request.
 func (r Request) HasHeader(key string) bool {
 	v := r.Req.Header.Get(key)
 	if v == "" {
@@ -106,6 +110,7 @@ func (r Request) HasHeader(key string) bool {
 	return true
 }
 
+//HasCookie is used to check if a cookie exists in a request
 func (r Request) HasCookie(key string) bool {
 	_, err := r.Req.Cookie(key)
 	if err != nil {
@@ -114,6 +119,7 @@ func (r Request) HasCookie(key string) bool {
 	return true
 }
 
+//CookieVal is used to get value of a cookie
 func (r Request) CookieVal(key string) (string, EssenError) {
 	ee := EssenError{nilval: true}
 	if !r.HasCookie(key) {
@@ -126,6 +132,7 @@ func (r Request) CookieVal(key string) (string, EssenError) {
 	return cookie.Value, ee
 }
 
+//Header function is used to get value of request headers
 func (r Request) Header(key string) (string, EssenError) {
 	if r.HasHeader(key) {
 		hval := r.Req.Header.Get(key)
@@ -141,6 +148,7 @@ func (r Request) Header(key string) (string, EssenError) {
 func (r *Request) requestBody() {
 	contentType, ee := r.Header("Content-Type")
 	r.App = essenGlobal.Locals
+	r.Locals = make(map[string]interface{})
 	if !ee.IsNil() {
 		contentType = "application/x-www-form-urlencoded"
 	}
@@ -148,11 +156,11 @@ func (r *Request) requestBody() {
 		if !mConfigIsSet() {
 			setDefaultConfig()
 		}
-		r.Body = MultiPartBody{body: r.Req, Uid: r.Uid}
+		r.Body = multiPartBody{body: r.Req, uid: r.Uid}
 		return
 	}
 	if r.Method() == "GET" || r.Method() == "HEAD" {
-		r.Body = GetBody{body: r.Req.URL}
+		r.Body = getBody{body: r.Req.URL}
 		return
 	}
 	if r.Method() == "POST" || r.Method() == "PUT" {
@@ -161,7 +169,7 @@ func (r *Request) requestBody() {
 			ee := EssenError{nilval: false, errortype: "FormParseError", message: err.Error()}
 			log.Panic(ee.Error())
 		}
-		r.Body = PostBody{body: r.Req}
+		r.Body = postBody{body: r.Req}
 		return
 	}
 }

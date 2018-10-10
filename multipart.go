@@ -19,7 +19,9 @@ func (u uploadParam) push(key string, value string) uploadParam {
 	return nil
 }
 
-//Deleting Request Related MetaData (Mostly Multipart Data)
+//Close method is used to clear request related data (Mostly Multipart Data)
+//
+//  req.Close()
 func (r Request) Close() {
 	_, ok := uploadedPaths[r.Uid]
 	if ok {
@@ -32,9 +34,15 @@ var uploadedPaths = make(map[string]uploadParam)
 //isSet
 var isSet = false
 
-//Multipart Config
-var MultiPartConfig = map[string]string{"UploadDir": Defaults.UploadDir}
+//MultiPartConfig map is used to store configuration data for multipart requests.
+var MultiPartConfig = map[string]string{"UploadDir": Defaults.UploadDir} //optional
 
+//SetMultiPartConfig function is used to set multipart requests configuration
+//
+//It can be set directly by changing MultiPartConfig map but calling this function is recommended way of doing so.
+//
+//  app := essen.App()
+//  app.SetMultiPartConfig(map[string]string{"UploadDir": "./uploadsFolder"}) //optional
 func (e Essen) SetMultiPartConfig(configMap map[string]string) bool {
 	if configMap["UploadDir"] == "" {
 		configMap["UploadDir"] = Defaults.UploadDir

@@ -1,8 +1,9 @@
 package essen
 
 import (
-	"github.com/zemirco/uid"
 	"net/http"
+
+	"github.com/zemirco/uid"
 )
 
 type router struct {
@@ -11,6 +12,7 @@ type router struct {
 	put  handlerStorage
 }
 
+//Get function is used to add a reqeust handler in a router group to repond against GET HTTP request method.
 func (r *router) Get(route string, f func(Response, Request)) {
 	ff := func(res http.ResponseWriter, req *http.Request) {
 
@@ -27,6 +29,7 @@ func (r *router) Get(route string, f func(Response, Request)) {
 	r.get[route] = ff
 }
 
+//Post function is used to add a request handler in a router group to respond against POST HTTP request method.
 func (r *router) Post(route string, f func(Response, Request)) {
 	ff := func(res http.ResponseWriter, req *http.Request) {
 
@@ -43,6 +46,7 @@ func (r *router) Post(route string, f func(Response, Request)) {
 	r.post[route] = ff
 }
 
+//Put function is used to add a request handler in a router group to respond against PUT HTTP request method.
 func (r *router) Put(route string, f func(Response, Request)) {
 	ff := func(res http.ResponseWriter, req *http.Request) {
 
@@ -59,6 +63,9 @@ func (r *router) Put(route string, f func(Response, Request)) {
 	r.put[route] = ff
 }
 
+//UseRouter function is called to register router against a parent route.
+//
+//Look at Router() method for an example.
 func (e Essen) UseRouter(route string, router router) {
 
 	//Register Get Routes
@@ -80,10 +87,26 @@ func (e Essen) UseRouter(route string, router router) {
 	}
 }
 
+//Done function is used to clear all router related data once it is passed in UseRouter function.
 func (r *router) Done() {
 	*r = router{}
 }
 
+//Router function is used to get router instance which can then be used to group different request handlers.
+//
+//  app := essen.App()
+//  router := essen.Router()
+//
+//  router.Get("/index", func(res essen.Response, req essen.Request){
+//		//do something
+//  })
+//
+//	router.Post("/form", func(res essen.Response, req, essen.Request){
+//		//do something
+//	})
+//
+//	app.UseRouter("/user", router)
+//  router.Done() //Call Done after using a router, Used to achieve memory efficiency.
 func (e Essen) Router() router {
-	return router{get: make(handlerStorage), post: make(handlerStorage)}
+	return router{get: make(handlerStorage), post: make(handlerStorage), put: make(handlerStorage)}
 }

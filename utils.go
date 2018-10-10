@@ -7,23 +7,39 @@ import (
 )
 
 const (
+
+	//Minute constant to get numerical value of time unit
 	Minute = 60
-	Hour   = 60 * Minute
-	Day    = 24 * Hour
-	Week   = 7 * Day
-	Month  = 4 * Week
+
+	//Hour constant to get numerical value of time unit
+	Hour = 60 * Minute
+
+	//Day constant to get numerical value of time unit
+	Day = 24 * Hour
+
+	//Week constant to get numerical value of time unit
+	Week = 7 * Day
+
+	//Month constant to get numerical value of time unit
+	Month = 4 * Week
 )
 
+//TemplateFunc type instance is used to pass functions in go templates
 type TemplateFunc map[string]interface{}
 
+//GetTemplateFunc returns an instance of TemplateFunc type
+//
+//  tf := essen.GetTemplateFunc()
 func GetTemplateFunc() TemplateFunc {
 	return make(TemplateFunc)
 }
 
+//Push method is used to add function to TemplateFunc instance
 func (t TemplateFunc) Push(key string, f interface{}) {
 	t[key] = f
 }
 
+//CreateFileIfNotExist is used to create a file if does not exists.
 func CreateFileIfNotExist(path string) (*os.File, EssenError) {
 	ee := EssenError{nilval: true}
 	f, err := os.OpenFile(path, os.O_CREATE|os.O_RDWR, 0666)
@@ -36,6 +52,7 @@ func CreateFileIfNotExist(path string) (*os.File, EssenError) {
 	return f, ee
 }
 
+//CreateDirIfNotExist is used to create a directory if does not exists.
 func CreateDirIfNotExist(path string) EssenError {
 	ee := EssenError{nilval: true}
 	err := os.MkdirAll(path, 0777)
@@ -47,8 +64,9 @@ func CreateDirIfNotExist(path string) EssenError {
 	return ee
 }
 
+//SetConcurrencyLimit is used to set limit on concurrently running request handlers
 func SetConcurrencyLimit(n int) {
-	jobqueue.SetConcurrecny(n)
+	jobqueue.SetConcurrency(n)
 }
 
 func matchStaticUrl(url string) string {

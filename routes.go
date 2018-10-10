@@ -1,10 +1,11 @@
 package essen
 
 import (
-	"github.com/zemirco/uid"
 	"log"
 	"net/http"
 	"path/filepath"
+
+	"github.com/zemirco/uid"
 )
 
 type handlerStorage map[string]func(http.ResponseWriter, *http.Request)
@@ -28,6 +29,13 @@ var paths = pathCache{
 	static: make(staticHandlerStorage),
 }
 
+//Head is a function to register a route against HTTP HEAD request method
+//
+//  app := essen.App()
+//
+//  app.Head("/", func(res app.Response, req app.Request){
+//  	//do something
+//  })
 func (e Essen) Head(route string, f func(Response, Request)) {
 	ff := func(res http.ResponseWriter, req *http.Request) {
 
@@ -44,6 +52,13 @@ func (e Essen) Head(route string, f func(Response, Request)) {
 	paths.head[route] = ff
 }
 
+//Get is a function to register a route against HTTP GET request method
+//
+//  app := essen.App()
+//
+//  app.Get("/", func(res app.Response, req app.Request){
+//  	//do something
+//  })
 func (e Essen) Get(route string, f func(Response, Request)) {
 	ff := func(res http.ResponseWriter, req *http.Request) {
 
@@ -60,6 +75,13 @@ func (e Essen) Get(route string, f func(Response, Request)) {
 	paths.get[route] = ff
 }
 
+//Post is a function to register a route against HTTP POST request method
+//
+//  app := essen.App()
+//
+//  app.Post("/", func(res app.Response, req app.Request){
+//  	//do something
+//  })
 func (e Essen) Post(route string, f func(Response, Request)) {
 	ff := func(res http.ResponseWriter, req *http.Request) {
 
@@ -76,6 +98,13 @@ func (e Essen) Post(route string, f func(Response, Request)) {
 	paths.post[route] = ff
 }
 
+//Put is a function to register a route against HTTP PUT request method
+//
+//  app := essen.App()
+//
+//  app.Put("/", func(res app.Response, req app.Request){
+//  	//do something
+//  })
 func (e Essen) Put(route string, f func(Response, Request)) {
 	ff := func(res http.ResponseWriter, req *http.Request) {
 
@@ -92,6 +121,13 @@ func (e Essen) Put(route string, f func(Response, Request)) {
 	paths.put[route] = ff
 }
 
+//Use is a function to register a route against any HTTP request method.
+//
+//  app := essen.App()
+//
+//  app.Use("/", func(res app.Response, req app.Request){
+//  	//do something
+//  })
 func (e Essen) Use(route string, f func(Response, Request)) {
 	ff := func(res http.ResponseWriter, req *http.Request) {
 
@@ -108,6 +144,12 @@ func (e Essen) Use(route string, f func(Response, Request)) {
 	paths.use[route] = ff
 }
 
+//Static is function to serve static files on reciept HTTP request.
+//
+//`path` parameter can either be a directory path or a file path.
+//
+//  app := essen.App()
+//  app.Static("/static", "./static_dir")
 func (e Essen) Static(route string, path string) {
 
 	//Create error instance
