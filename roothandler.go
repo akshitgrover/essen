@@ -1,8 +1,9 @@
 package essen
 
 import (
-	"essen/jobqueue"
 	"net/http"
+
+	"github.com/akshitgrover/essen/jobqueue"
 )
 
 func rootHandler(res http.ResponseWriter, req *http.Request) {

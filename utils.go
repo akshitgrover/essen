@@ -1,9 +1,10 @@
 package essen
 
 import (
-	"essen/jobqueue"
 	"os"
 	"regexp"
+
+	"github.com/akshitgrover/essen/jobqueue"
 )
 
 const (
